@@ -2,9 +2,10 @@
 
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import type { CSSProperties } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 
 export default function AdminHeader() {
+	const [username, setUsername] = useState('')
 	const router = useRouter()
 	const handleLogout = async () => {
 		try {
@@ -17,6 +18,7 @@ export default function AdminHeader() {
 			console.error(error)
 		}
 	}
+	
 	return (
 		<header style={styles.header}>
 			<div style={styles.logoContainer}>

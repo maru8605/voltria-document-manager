@@ -1,7 +1,10 @@
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
-
+import { isAuthenticated } from '@/lib/auth'
 export async function POST(req: Request) {
+	if (!(await isAuthenticated())) {
+		return Response.json({ error: 'No autorizado' }, { status: 401 })
+	}
 	try {
 		const body = await req.json()
 		console.log('📥 BODY RECIBIDO:', JSON.stringify(body, null, 2))
@@ -71,6 +74,9 @@ export async function POST(req: Request) {
 }
 
 export async function GET() {
+	if (!(await isAuthenticated())) {
+		return Response.json({ error: 'No autorizado' }, { status: 401 })
+	}
 	try {
 		const documents = await prisma.document.findMany({
 			where: {

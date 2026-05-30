@@ -32,6 +32,12 @@ export default function DocumentsListPage() {
 
 	const [deleting, setDeleting] = useState(false)
 
+	const clearFilters = () => {
+		setSearch('')
+		setFilterType('ALL')
+		setFilterDate('')
+	}
+
 	const router = useRouter()
 
 	useEffect(() => {
@@ -170,6 +176,10 @@ export default function DocumentsListPage() {
 
 						<option value='ORDEN_TRABAJO'>Órdenes de trabajo</option>
 					</select>
+
+					<button style={styles.button} onClick={clearFilters}>
+						Limpiar filtros
+					</button>
 				</div>
 
 				{/* CONTENT */}

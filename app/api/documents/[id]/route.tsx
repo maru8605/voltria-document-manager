@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-
+import { isAuthenticated } from '@/lib/auth'
 export async function GET(req: Request, context: { params: Promise<{ id: string }> }) {
+	if (!(await isAuthenticated())) {
+		return Response.json({ error: 'No autorizado' }, { status: 401 })
+	}
 	const { id } = await context.params
 
 	const document = await prisma.document.findFirst({
@@ -19,6 +22,9 @@ export async function GET(req: Request, context: { params: Promise<{ id: string 
 }
 
 export async function PUT(req: Request, context: { params: Promise<{ id: string }> }) {
+	if (!(await isAuthenticated())) {
+		return Response.json({ error: 'No autorizado' }, { status: 401 })
+	}
 	try {
 		const { id } = await context.params
 
@@ -49,6 +55,9 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
 }
 
 export async function DELETE(req: Request, context: { params: Promise<{ id: string }> }) {
+	if (!(await isAuthenticated())) {
+		return Response.json({ error: 'No autorizado' }, { status: 401 })
+	}
 	try {
 		const { id } = await context.params
 
