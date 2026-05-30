@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { CSSProperties } from 'react'
 import { useRouter } from 'next/navigation'
+import Modal from '@/components/ui/Modal'
 type DocumentItem = {
 	id: string
 	type: string
@@ -22,6 +23,13 @@ export default function DocumentsListPage() {
 
 	const [search, setSearch] = useState('')
 	const [filterType, setFilterType] = useState('ALL')
+	const [filterDate, setFilterDate] = useState('')
+	
+	const [deleteModal, setDeleteModal] = useState(false)
+
+	const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(null)
+
+	const [deleting, setDeleting] = useState(false)
 
 	const router = useRouter()
 
@@ -55,9 +63,18 @@ export default function DocumentsListPage() {
 
 			const matchesType = filterType === 'ALL' || doc.type === filterType
 
-			return matchesSearch && matchesType
+			const docDate = new Date(doc.createdAt)
+
+			const localDate = `${docDate.getFullYear()}-${String(docDate.getMonth() + 1).padStart(
+				2,
+				'0'
+			)}-${String(docDate.getDate()).padStart(2, '0')}`
+
+			const matchesDate = !filterDate || localDate === filterDate
+
+			return matchesSearch && matchesType && matchesDate
 		})
-	}, [documents, search, filterType])
+	}, [documents, search, filterType, filterDate])
 
 	const getTypeLabel = (type: string) => {
 		switch (type) {
@@ -72,6 +89,33 @@ export default function DocumentsListPage() {
 
 			default:
 				return type
+		}
+	}
+
+	const handleDelete = async () => {
+		if (!selectedDocumentId) return
+
+		try {
+			setDeleting(true)
+
+			const response = await fetch(`/api/documents/${selectedDocumentId}`, {
+				method: 'DELETE',
+			})
+
+			if (!response.ok) {
+				throw new Error('Error eliminando documento')
+			}
+
+			setDocuments((prev) => prev.filter((doc) => doc.id !== selectedDocumentId))
+
+			setDeleteModal(false)
+
+			setSelectedDocumentId(null)
+		} catch (error) {
+			console.error(error)
+			alert('Error eliminando documento')
+		} finally {
+			setDeleting(false)
 		}
 	}
 
@@ -101,6 +145,13 @@ export default function DocumentsListPage() {
 					placeholder='Buscar por cliente o número...'
 					value={search}
 					onChange={(e) => setSearch(e.target.value)}
+				/>
+
+				<input
+					type='date'
+					value={filterDate}
+					onChange={(e) => setFilterDate(e.target.value)}
+					style={styles.searchInput}
 				/>
 
 				<select
@@ -161,15 +212,56 @@ export default function DocumentsListPage() {
 									>
 										Ver
 									</button>
-									<button style={styles.button}>Editar</button>
+									<button
+										style={styles.button}
+										onClick={() => router.push(`/admin/documents/edit/${doc.id}`)}
+									>
+										Editar
+									</button>
 
-									<button style={styles.buttonDanger}>Eliminar</button>
+									<button
+										style={styles.buttonDanger}
+										onClick={() => {
+											setSelectedDocumentId(doc.id)
+											setDeleteModal(true)
+										}}
+									>
+										Eliminar
+									</button>
 								</div>
 							</div>
 						))}
 					</div>
 				</>
 			)}
+
+			<Modal open={deleteModal} title='Eliminar documento' onClose={() => setDeleteModal(false)}>
+				<div
+					style={{
+						display: 'flex',
+						flexDirection: 'column',
+						gap: 16,
+					}}
+				>
+					<p style={{ color: '#000' }}>¿Estás seguro de eliminar este documento?</p>
+
+					<div
+						style={{
+							display: 'flex',
+							justifyContent: 'flex-end',
+							gap: 10,
+						}}
+					>
+						<button style={styles.button} onClick={() => setDeleteModal(false)}>
+							Cancelar
+						</button>
+
+						<button style={styles.buttonDanger} onClick={handleDelete} disabled={deleting}>
+							{deleting ? 'Eliminando...' : 'Eliminar'}
+						</button>
+					</div>
+				</div>
+			</Modal>
 		</div>
 	)
 }

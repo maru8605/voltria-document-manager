@@ -73,6 +73,9 @@ export async function POST(req: Request) {
 export async function GET() {
 	try {
 		const documents = await prisma.document.findMany({
+			where: {
+				deletedAt: null,
+			},
 			orderBy: {
 				createdAt: 'desc',
 			},

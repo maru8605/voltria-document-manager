@@ -4,8 +4,11 @@ import { prisma } from '@/lib/prisma'
 export async function GET(req: Request, context: { params: Promise<{ id: string }> }) {
 	const { id } = await context.params
 
-	const document = await prisma.document.findUnique({
-		where: { id },
+	const document = await prisma.document.findFirst({
+		where: {
+			id,
+			deletedAt: null,
+		},
 	})
 
 	if (!document) {
@@ -42,5 +45,26 @@ export async function PUT(req: Request, context: { params: Promise<{ id: string 
 				status: 500,
 			}
 		)
+	}
+}
+
+export async function DELETE(req: Request, context: { params: Promise<{ id: string }> }) {
+	try {
+		const { id } = await context.params
+
+		const document = await prisma.document.update({
+			where: {
+				id,
+			},
+			data: {
+				deletedAt: new Date(),
+			},
+		})
+
+		return NextResponse.json(document)
+	} catch (error) {
+		console.error('DELETE DOCUMENT ERROR:', error)
+
+		return NextResponse.json({ error: 'Error eliminando documento' }, { status: 500 })
 	}
 }

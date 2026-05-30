@@ -39,5 +39,6 @@ const styles: Record<string, CSSProperties> = {
 		background: '#000594',
 		color: 'white',
 		cursor: 'pointer',
+		borderRadius: '5px'
 	},
 }
