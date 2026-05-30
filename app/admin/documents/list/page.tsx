@@ -50,7 +50,7 @@ export default function DocumentsListPage() {
 
 				console.log('📦 DOCUMENTOS API:', data)
 
-				setDocuments(data)
+				setDocuments(Array.isArray(data) ? data : [])
 			} catch (error) {
 				console.error(error)
 			} finally {
