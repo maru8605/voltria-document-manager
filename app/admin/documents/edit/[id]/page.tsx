@@ -15,6 +15,8 @@ import type { RemitoData } from '@/types/documents/remito'
 import type { PresupuestoData } from '@/types/documents/presupuesto'
 import type { OrdenTrabajoData } from '@/types/documents/orden'
 
+import { useRouter } from 'next/navigation'
+
 
 
 type Document = {
@@ -33,7 +35,7 @@ export default function EditDocumentPage() {
 	const [document, setDocument] = useState<Document | null>(null)
 
 	const [loading, setLoading] = useState(true)
-
+  const router = useRouter()
 	useEffect(() => {
 		if (!id) return
 
@@ -167,7 +169,7 @@ export default function EditDocumentPage() {
 		<div style={styles.container}>
 			<h1 style={styles.title}>Editar documento</h1>
 
-			<div style={{ marginBottom: 20 }}>
+			<div style={styles.btnContainer}>
 				<button
 					style={{
 						padding: '10px 20px',
@@ -180,6 +182,9 @@ export default function EditDocumentPage() {
 					onClick={handleUpdate}
 				>
 					Guardar cambios
+				</button>
+				<button onClick={() => router.push('/admin')} style={styles.btn}>
+					← Inicio
 				</button>
 			</div>
 
@@ -301,4 +306,10 @@ const styles: Record<string, CSSProperties> = {
 		padding: '4px',
 		height: '30px',
 	},
+  btnContainer: {
+    marginBottom: '20px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  }
 }

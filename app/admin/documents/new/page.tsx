@@ -16,6 +16,9 @@ import type { OrdenTrabajoData } from '@/types/documents/orden'
 import type { PresupuestoData } from '@/types/documents/presupuesto'
 import Modal from '@/components/ui/Modal'
 import DocumentPrintWrapper from '@/components/pdf/DocumentPrintWrapper'
+import { useRouter } from 'next/navigation'
+
+
 
 type DocType = 'remito' | 'presupuesto' | 'orden'
 
@@ -95,7 +98,7 @@ export default function DocumentsNewPage() {
 		number: string
 		type: string
 	} | null>(null)
-
+	const router = useRouter()
 	// GUARDAR DOCUMENTO
 	const handleSave = async () => {
 		try {
@@ -220,28 +223,35 @@ export default function DocumentsNewPage() {
 	return (
 		<div style={styles.container}>
 			{/* SELECTOR */}
-			<div style={styles.selector}>
-				<button
-					onClick={() => setDocType('remito')}
-					style={docType === 'remito' ? styles.activeBtn : styles.btn}
-				>
-					Remito
-				</button>
+			<div style={styles.containerBtn}>
+				<div style={styles.selector}>
+					<button
+						onClick={() => setDocType('remito')}
+						style={docType === 'remito' ? styles.activeBtn : styles.btn}
+					>
+						Remito
+					</button>
 
-				<button
-					onClick={() => setDocType('presupuesto')}
-					style={docType === 'presupuesto' ? styles.activeBtn : styles.btn}
-				>
-					Presupuesto
-				</button>
+					<button
+						onClick={() => setDocType('presupuesto')}
+						style={docType === 'presupuesto' ? styles.activeBtn : styles.btn}
+					>
+						Presupuesto
+					</button>
 
-				<button
-					onClick={() => setDocType('orden')}
-					style={docType === 'orden' ? styles.activeBtn : styles.btn}
-				>
-					Orden de trabajo
+					<button
+						onClick={() => setDocType('orden')}
+						style={docType === 'orden' ? styles.activeBtn : styles.btn}
+					>
+						Orden de trabajo
+					</button>
+				</div>
+
+				<button onClick={() => router.push('/admin')} style={styles.btn}>
+					← Inicio
 				</button>
 			</div>
+
 
 			{/* BOTON SAVE */}
 			<div style={styles.actions}>
@@ -275,7 +285,7 @@ export default function DocumentsNewPage() {
 							Cerrar
 						</button>
 
-						<DocumentPrintWrapper buttonLabel='Descargar PDF' >
+						<DocumentPrintWrapper buttonLabel='Descargar PDF'>
 							{docType === 'remito' && documentForPrint && (
 								<RemitoClassicTemplate data={documentForPrint as RemitoData} />
 							)}
@@ -415,4 +425,9 @@ const styles: Record<string, CSSProperties> = {
 		padding: '4px',
 		height: '30px',
 	},
+	containerBtn: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'space-between'
+	}
 }

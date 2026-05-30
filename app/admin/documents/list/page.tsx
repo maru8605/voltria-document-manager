@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import type { CSSProperties } from 'react'
-
+import { useRouter } from 'next/navigation'
 type DocumentItem = {
 	id: string
 	type: string
@@ -22,6 +22,8 @@ export default function DocumentsListPage() {
 
 	const [search, setSearch] = useState('')
 	const [filterType, setFilterType] = useState('ALL')
+
+	const router = useRouter()
 
 	useEffect(() => {
 		const loadDocuments = async () => {
@@ -82,6 +84,14 @@ export default function DocumentsListPage() {
 
 					<p style={styles.subtitle}>Visualizá, buscá y administrá los documentos creados.</p>
 				</div>
+				<div style={styles.headerContainer}>
+					<button onClick={() => router.push('/admin')} style={styles.btn}>
+						← Inicio
+					</button>
+					<button onClick={() => router.push('/admin/documents/new')} style={styles.btn}>
+						Nuevo
+					</button>
+				</div>
 			</div>
 
 			{/* FILTERS */}
@@ -140,7 +150,7 @@ export default function DocumentsListPage() {
 
 								<div style={styles.cardContent}>
 									<h3 style={styles.number}>{doc.number || 'Sin número'}</h3>
-								
+
 									<p style={styles.client}>{doc.data?.cliente?.nombre || 'Sin cliente'}</p>
 								</div>
 
@@ -327,5 +337,22 @@ const styles: Record<string, CSSProperties> = {
 		textAlign: 'center',
 		border: '1px solid #E5E7EB',
 		color: '#6B7280',
+	},
+	btn: {
+		padding: '10px 15px',
+		border: '1px solid #000000',
+		background: 'white',
+		cursor: 'pointer',
+		color: 'black',
+	},
+	headerContainer: {
+		marginBottom: '20px',
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		gap: 10,
+	},
+	btnContainer: {
+		gap: 10,
 	},
 }
