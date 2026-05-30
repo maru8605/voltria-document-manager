@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import type { CSSProperties } from 'react'
 import { useRouter } from 'next/navigation'
 import Modal from '@/components/ui/Modal'
+import AdminHeader from '@/components/layout/AdminHeader'
 type DocumentItem = {
 	id: string
 	type: string
@@ -120,149 +121,152 @@ export default function DocumentsListPage() {
 	}
 
 	return (
-		<div style={styles.container}>
-			{/* HEADER */}
-			<div style={styles.header}>
-				<div>
-					<h1 style={styles.title}>Documentos generados</h1>
+		<>
+			<AdminHeader />
+			<div style={styles.container}>
+				{/* HEADER */}
+				<div style={styles.header}>
+					<div>
+						<h1 style={styles.title}>Documentos generados</h1>
 
-					<p style={styles.subtitle}>Visualizá, buscá y administrá los documentos creados.</p>
-				</div>
-				<div style={styles.headerContainer}>
-					<button onClick={() => router.push('/admin')} style={styles.btn}>
-						← Inicio
-					</button>
-					<button onClick={() => router.push('/admin/documents/new')} style={styles.btn}>
-						Nuevo
-					</button>
-				</div>
-			</div>
-
-			{/* FILTERS */}
-			<div style={styles.filters}>
-				<input
-					style={styles.searchInput}
-					placeholder='Buscar por cliente o número...'
-					value={search}
-					onChange={(e) => setSearch(e.target.value)}
-				/>
-
-				<input
-					type='date'
-					value={filterDate}
-					onChange={(e) => setFilterDate(e.target.value)}
-					style={styles.searchInput}
-				/>
-
-				<select
-					style={styles.select}
-					value={filterType}
-					onChange={(e) => setFilterType(e.target.value)}
-				>
-					<option value='ALL'>Todos</option>
-
-					<option value='REMITO'>Remitos</option>
-
-					<option value='PRESUPUESTO'>Presupuestos</option>
-
-					<option value='ORDEN_TRABAJO'>Órdenes de trabajo</option>
-				</select>
-			</div>
-
-			{/* CONTENT */}
-			{loading ? (
-				<div style={styles.emptyState}>
-					<p>Cargando documentos...</p>
-				</div>
-			) : filteredDocuments.length === 0 ? (
-				<div style={styles.emptyState}>
-					<h3>No se encontraron documentos</h3>
-
-					<p>Probá cambiando los filtros o generando un nuevo documento.</p>
-				</div>
-			) : (
-				<>
-					{/* RESUMEN */}
-					<div style={styles.summary}>
-						<p style={styles.summaryText}>
-							Documentos encontrados: <b>{filteredDocuments.length}</b>
-						</p>
+						<p style={styles.subtitle}>Visualizá, buscá y administrá los documentos creados.</p>
 					</div>
-
-					{/* GRID */}
-					<div style={styles.grid}>
-						{filteredDocuments.map((doc) => (
-							<div key={doc.id} style={styles.card}>
-								<div style={styles.cardTop}>
-									<div style={styles.badge}>{getTypeLabel(doc.type)}</div>
-
-									<p style={styles.date}>{new Date(doc.createdAt).toLocaleDateString()}</p>
-								</div>
-
-								<div style={styles.cardContent}>
-									<h3 style={styles.number}>{doc.number || 'Sin número'}</h3>
-
-									<p style={styles.client}>{doc.data?.cliente?.nombre || 'Sin cliente'}</p>
-								</div>
-
-								<div style={styles.actions}>
-									<button
-										onClick={() => (window.location.href = `/admin/documents/${doc.id}`)}
-										style={styles.primaryButton}
-									>
-										Ver
-									</button>
-									<button
-										style={styles.button}
-										onClick={() => router.push(`/admin/documents/edit/${doc.id}`)}
-									>
-										Editar
-									</button>
-
-									<button
-										style={styles.buttonDanger}
-										onClick={() => {
-											setSelectedDocumentId(doc.id)
-											setDeleteModal(true)
-										}}
-									>
-										Eliminar
-									</button>
-								</div>
-							</div>
-						))}
+					<div style={styles.headerContainer}>
+						<button onClick={() => router.push('/admin')} style={styles.btn}>
+							← Inicio
+						</button>
+						<button onClick={() => router.push('/admin/documents/new')} style={styles.btn}>
+							Nuevo
+						</button>
 					</div>
-				</>
-			)}
+				</div>
 
-			<Modal open={deleteModal} title='Eliminar documento' onClose={() => setDeleteModal(false)}>
-				<div
-					style={{
-						display: 'flex',
-						flexDirection: 'column',
-						gap: 16,
-					}}
-				>
-					<p style={{ color: '#000' }}>¿Estás seguro de eliminar este documento?</p>
+				{/* FILTERS */}
+				<div style={styles.filters}>
+					<input
+						style={styles.searchInput}
+						placeholder='Buscar por cliente o número...'
+						value={search}
+						onChange={(e) => setSearch(e.target.value)}
+					/>
 
+					<input
+						type='date'
+						value={filterDate}
+						onChange={(e) => setFilterDate(e.target.value)}
+						style={styles.searchInput}
+					/>
+
+					<select
+						style={styles.select}
+						value={filterType}
+						onChange={(e) => setFilterType(e.target.value)}
+					>
+						<option value='ALL'>Todos</option>
+
+						<option value='REMITO'>Remitos</option>
+
+						<option value='PRESUPUESTO'>Presupuestos</option>
+
+						<option value='ORDEN_TRABAJO'>Órdenes de trabajo</option>
+					</select>
+				</div>
+
+				{/* CONTENT */}
+				{loading ? (
+					<div style={styles.emptyState}>
+						<p>Cargando documentos...</p>
+					</div>
+				) : filteredDocuments.length === 0 ? (
+					<div style={styles.emptyState}>
+						<h3>No se encontraron documentos</h3>
+
+						<p>Probá cambiando los filtros o generando un nuevo documento.</p>
+					</div>
+				) : (
+					<>
+						{/* RESUMEN */}
+						<div style={styles.summary}>
+							<p style={styles.summaryText}>
+								Documentos encontrados: <b>{filteredDocuments.length}</b>
+							</p>
+						</div>
+
+						{/* GRID */}
+						<div style={styles.grid}>
+							{filteredDocuments.map((doc) => (
+								<div key={doc.id} style={styles.card}>
+									<div style={styles.cardTop}>
+										<div style={styles.badge}>{getTypeLabel(doc.type)}</div>
+
+										<p style={styles.date}>{new Date(doc.createdAt).toLocaleDateString()}</p>
+									</div>
+
+									<div style={styles.cardContent}>
+										<h3 style={styles.number}>{doc.number || 'Sin número'}</h3>
+
+										<p style={styles.client}>{doc.data?.cliente?.nombre || 'Sin cliente'}</p>
+									</div>
+
+									<div style={styles.actions}>
+										<button
+											onClick={() => (window.location.href = `/admin/documents/${doc.id}`)}
+											style={styles.primaryButton}
+										>
+											Ver
+										</button>
+										<button
+											style={styles.button}
+											onClick={() => router.push(`/admin/documents/edit/${doc.id}`)}
+										>
+											Editar
+										</button>
+
+										<button
+											style={styles.buttonDanger}
+											onClick={() => {
+												setSelectedDocumentId(doc.id)
+												setDeleteModal(true)
+											}}
+										>
+											Eliminar
+										</button>
+									</div>
+								</div>
+							))}
+						</div>
+					</>
+				)}
+
+				<Modal open={deleteModal} title='Eliminar documento' onClose={() => setDeleteModal(false)}>
 					<div
 						style={{
 							display: 'flex',
-							justifyContent: 'flex-end',
-							gap: 10,
+							flexDirection: 'column',
+							gap: 16,
 						}}
 					>
-						<button style={styles.button} onClick={() => setDeleteModal(false)}>
-							Cancelar
-						</button>
+						<p style={{ color: '#000' }}>¿Estás seguro de eliminar este documento?</p>
 
-						<button style={styles.buttonDanger} onClick={handleDelete} disabled={deleting}>
-							{deleting ? 'Eliminando...' : 'Eliminar'}
-						</button>
+						<div
+							style={{
+								display: 'flex',
+								justifyContent: 'flex-end',
+								gap: 10,
+							}}
+						>
+							<button style={styles.button} onClick={() => setDeleteModal(false)}>
+								Cancelar
+							</button>
+
+							<button style={styles.buttonDanger} onClick={handleDelete} disabled={deleting}>
+								{deleting ? 'Eliminando...' : 'Eliminar'}
+							</button>
+						</div>
 					</div>
-				</div>
-			</Modal>
-		</div>
+				</Modal>
+			</div>
+		</>
 	)
 }
 

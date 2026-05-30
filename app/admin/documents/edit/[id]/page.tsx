@@ -17,7 +17,7 @@ import type { OrdenTrabajoData } from '@/types/documents/orden'
 import Modal from '@/components/ui/Modal'
 import { useRouter } from 'next/navigation'
 import DocumentPrintWrapper from '@/components/pdf/DocumentPrintWrapper'
-
+import AdminHeader from '@/components/layout/AdminHeader'
 
 type Document = {
 	id: string
@@ -169,93 +169,96 @@ export default function EditDocumentPage() {
 	}
 
 	return (
-		<div style={styles.container}>
-			<h1 style={styles.title}>Editar documento</h1>
+		<>
+			<AdminHeader />
+			<div style={styles.container}>
+				<h1 style={styles.title}>Editar documento</h1>
 
-			<div style={styles.btnContainer}>
-				<button
-					style={{
-						padding: '10px 20px',
-						background: '#111827',
-						color: 'white',
-						border: 'none',
-						borderRadius: 8,
-						cursor: 'pointer',
-					}}
-					onClick={handleUpdate}
+				<div style={styles.btnContainer}>
+					<button
+						style={{
+							padding: '10px 20px',
+							background: '#111827',
+							color: 'white',
+							border: 'none',
+							borderRadius: 8,
+							cursor: 'pointer',
+						}}
+						onClick={handleUpdate}
+					>
+						Guardar cambios
+					</button>
+					<DocumentPrintWrapper buttonLabel='Imprimir'>{renderPreview()}</DocumentPrintWrapper>
+					<button onClick={() => router.push('/admin')} style={styles.btn}>
+						← Inicio
+					</button>
+				</div>
+
+				<div style={styles.split}>
+					<div style={styles.form}>{renderForm()}</div>
+
+					<div style={styles.preview}>{renderPreview()}</div>
+				</div>
+
+				<Modal
+					open={successModal}
+					title='Documento actualizado'
+					onClose={() => setSuccessModal(false)}
 				>
-					Guardar cambios
-				</button>
-				<DocumentPrintWrapper buttonLabel='Imprimir'>{renderPreview()}</DocumentPrintWrapper>
-				<button onClick={() => router.push('/admin')} style={styles.btn}>
-					← Inicio
-				</button>
-			</div>
-
-			<div style={styles.split}>
-				<div style={styles.form}>{renderForm()}</div>
-
-				<div style={styles.preview}>{renderPreview()}</div>
-			</div>
-
-			<Modal
-				open={successModal}
-				title='Documento actualizado'
-				onClose={() => setSuccessModal(false)}
-			>
-				<div
-					style={{
-						display: 'flex',
-						flexDirection: 'column',
-						gap: 16,
-					}}
-				>
-					<p style={{ color: '#374151' }}>Los cambios fueron guardados correctamente.</p>
-
 					<div
 						style={{
 							display: 'flex',
-							justifyContent: 'flex-end',
-							gap: 10,
+							flexDirection: 'column',
+							gap: 16,
 						}}
 					>
-						<button style={styles.btn} onClick={() => setSuccessModal(false)}>
-							Seguir editando
-						</button>
+						<p style={{ color: '#374151' }}>Los cambios fueron guardados correctamente.</p>
 
-						<button
-							style={styles.activeBtn}
-							onClick={() => router.push(`/admin/documents/${document?.id}`)}
+						<div
+							style={{
+								display: 'flex',
+								justifyContent: 'flex-end',
+								gap: 10,
+							}}
 						>
-							Ver documento
-						</button>
+							<button style={styles.btn} onClick={() => setSuccessModal(false)}>
+								Seguir editando
+							</button>
+
+							<button
+								style={styles.activeBtn}
+								onClick={() => router.push(`/admin/documents/${document?.id}`)}
+							>
+								Ver documento
+							</button>
+						</div>
 					</div>
-				</div>
-			</Modal>
+				</Modal>
 
-			<Modal open={errorModal} title='Error' onClose={() => setErrorModal(false)}>
-				<div
-					style={{
-						display: 'flex',
-						flexDirection: 'column',
-						gap: 16,
-					}}
-				>
-					<p style={{ color: '#DC2626' }}>Ocurrió un error al actualizar el documento.</p>
-
+				<Modal open={errorModal} title='Error' onClose={() => setErrorModal(false)}>
 					<div
 						style={{
 							display: 'flex',
-							justifyContent: 'flex-end',
+							flexDirection: 'column',
+							gap: 16,
 						}}
 					>
-						<button style={styles.btn} onClick={() => setErrorModal(false)}>
-							Cerrar
-						</button>
+						<p style={{ color: '#DC2626' }}>Ocurrió un error al actualizar el documento.</p>
+
+						<div
+							style={{
+								display: 'flex',
+								justifyContent: 'flex-end',
+							}}
+						>
+							<button style={styles.btn} onClick={() => setErrorModal(false)}>
+								Cerrar
+							</button>
+						</div>
 					</div>
-				</div>
-			</Modal>
-		</div>
+				</Modal>
+			</div>
+		</>
 	)
 }
 

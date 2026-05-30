@@ -17,7 +17,7 @@ import type { PresupuestoData } from '@/types/documents/presupuesto'
 import Modal from '@/components/ui/Modal'
 import DocumentPrintWrapper from '@/components/pdf/DocumentPrintWrapper'
 import { useRouter } from 'next/navigation'
-
+import AdminHeader from '@/components/layout/AdminHeader'
 
 
 type DocType = 'remito' | 'presupuesto' | 'orden'
@@ -221,98 +221,104 @@ export default function DocumentsNewPage() {
 	}
 
 	return (
-		<div style={styles.container}>
-			{/* SELECTOR */}
-			<div style={styles.containerBtn}>
-				<div style={styles.selector}>
-					<button
-						onClick={() => setDocType('remito')}
-						style={docType === 'remito' ? styles.activeBtn : styles.btn}
-					>
-						Remito
-					</button>
-
-					<button
-						onClick={() => setDocType('presupuesto')}
-						style={docType === 'presupuesto' ? styles.activeBtn : styles.btn}
-					>
-						Presupuesto
-					</button>
-
-					<button
-						onClick={() => setDocType('orden')}
-						style={docType === 'orden' ? styles.activeBtn : styles.btn}
-					>
-						Orden de trabajo
-					</button>
-				</div>
-
-				<button onClick={() => router.push('/admin')} style={styles.btn}>
-					← Inicio
-				</button>
-			</div>
-
-
-			{/* BOTON SAVE */}
-			<div style={styles.actions}>
-				<button style={styles.saveButton} onClick={handleSave} disabled={loading}>
-					{loading ? 'Guardando...' : 'Guardar documento'}
-				</button>
-			</div>
-
-			{/* SPLIT */}
-			<div style={styles.split}>
-				{/* FORM */}
-				<div style={styles.form}>{renderForm()}</div>
-
-				{/* PREVIEW */}
-				<div style={styles.preview}>{renderTemplate()}</div>
-			</div>
-
-			<Modal open={successModal} title='Documento generado' onClose={() => setSuccessModal(false)}>
-				<div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-					<p style={{ color: '#374151' }}>El documento se generó correctamente.</p>
-
-					<div
-						style={{
-							display: 'flex',
-							gap: 10,
-							justifyContent: 'flex-end',
-							flexWrap: 'wrap',
-						}}
-					>
-						<button style={styles.btn} onClick={() => setSuccessModal(false)}>
-							Cerrar
+		<>
+			<AdminHeader />
+			<div style={styles.container}>
+				{/* SELECTOR */}
+				<div style={styles.containerBtn}>
+					<div style={styles.selector}>
+						<button
+							onClick={() => setDocType('remito')}
+							style={docType === 'remito' ? styles.activeBtn : styles.btn}
+						>
+							Remito
 						</button>
-
-						<DocumentPrintWrapper buttonLabel='Descargar PDF'>
-							{docType === 'remito' && documentForPrint && (
-								<RemitoClassicTemplate data={documentForPrint as RemitoData} />
-							)}
-
-							{docType === 'presupuesto' && documentForPrint && (
-								<PresupuestoClassicTemplate data={documentForPrint as PresupuestoData} />
-							)}
-
-							{docType === 'orden' && documentForPrint && (
-								<OrdenTrabajoTemplate data={documentForPrint as OrdenTrabajoData} />
-							)}
-						</DocumentPrintWrapper>
 
 						<button
-							style={styles.activeBtn}
-							onClick={() => {
-								if (!createdDocument) return
-
-								window.location.href = `/admin/documents/${createdDocument.id}`
-							}}
+							onClick={() => setDocType('presupuesto')}
+							style={docType === 'presupuesto' ? styles.activeBtn : styles.btn}
 						>
-							Ver documento
+							Presupuesto
+						</button>
+
+						<button
+							onClick={() => setDocType('orden')}
+							style={docType === 'orden' ? styles.activeBtn : styles.btn}
+						>
+							Orden de trabajo
 						</button>
 					</div>
+
+					<button onClick={() => router.push('/admin')} style={styles.btn}>
+						← Inicio
+					</button>
 				</div>
-			</Modal>
-		</div>
+
+				{/* BOTON SAVE */}
+				<div style={styles.actions}>
+					<button style={styles.saveButton} onClick={handleSave} disabled={loading}>
+						{loading ? 'Guardando...' : 'Guardar documento'}
+					</button>
+				</div>
+
+				{/* SPLIT */}
+				<div style={styles.split}>
+					{/* FORM */}
+					<div style={styles.form}>{renderForm()}</div>
+
+					{/* PREVIEW */}
+					<div style={styles.preview}>{renderTemplate()}</div>
+				</div>
+
+				<Modal
+					open={successModal}
+					title='Documento generado'
+					onClose={() => setSuccessModal(false)}
+				>
+					<div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+						<p style={{ color: '#374151' }}>El documento se generó correctamente.</p>
+
+						<div
+							style={{
+								display: 'flex',
+								gap: 10,
+								justifyContent: 'flex-end',
+								flexWrap: 'wrap',
+							}}
+						>
+							<button style={styles.btn} onClick={() => setSuccessModal(false)}>
+								Cerrar
+							</button>
+
+							<DocumentPrintWrapper buttonLabel='Descargar PDF'>
+								{docType === 'remito' && documentForPrint && (
+									<RemitoClassicTemplate data={documentForPrint as RemitoData} />
+								)}
+
+								{docType === 'presupuesto' && documentForPrint && (
+									<PresupuestoClassicTemplate data={documentForPrint as PresupuestoData} />
+								)}
+
+								{docType === 'orden' && documentForPrint && (
+									<OrdenTrabajoTemplate data={documentForPrint as OrdenTrabajoData} />
+								)}
+							</DocumentPrintWrapper>
+
+							<button
+								style={styles.activeBtn}
+								onClick={() => {
+									if (!createdDocument) return
+
+									window.location.href = `/admin/documents/${createdDocument.id}`
+								}}
+							>
+								Ver documento
+							</button>
+						</div>
+					</div>
+				</Modal>
+			</div>
+		</>
 	)
 }
 

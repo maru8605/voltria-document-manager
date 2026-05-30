@@ -11,6 +11,7 @@ import type { RemitoData } from '@/types/documents/remito'
 import type { PresupuestoData } from '@/types/documents/presupuesto'
 import type { OrdenTrabajoData } from '@/types/documents/orden'
 import Modal from '@/components/ui/Modal'
+import AdminHeader from '@/components/layout/AdminHeader'
 import DocumentPrintWrapper from '@/components/pdf/DocumentPrintWrapper'
 type DocumentData = Record<string, unknown>
 
@@ -157,74 +158,77 @@ export default function DocumentDetailPage() {
 	}
 
 	return (
-		<div style={styles.container}>
-			{/* HEADER */}
-			<div style={styles.header}>
-				<div>
-					<h1 style={styles.title}>
-						{document.type} #{document.number}
-					</h1>
+		<>
+			<AdminHeader />
+			<div style={styles.container}>
+				{/* HEADER */}
+				<div style={styles.header}>
+					<div>
+						<h1 style={styles.title}>
+							{document.type} #{document.number}
+						</h1>
 
-					<p style={styles.subtitle}>
-						Creado el {new Date(document.createdAt).toLocaleDateString()}
-					</p>
-				</div>
+						<p style={styles.subtitle}>
+							Creado el {new Date(document.createdAt).toLocaleDateString()}
+						</p>
+					</div>
 
-				<div style={styles.actions}>
-					<button style={styles.secondaryButton} onClick={() => router.push('/admin')}>
-						Volver
-					</button>
-
-					<button
-						style={styles.primaryButton}
-						onClick={() => router.push(`/admin/documents/edit/${document.id}`)}
-					>
-						Editar
-					</button>
-
-					<DocumentPrintWrapper buttonLabel='Imprimir'>{renderTemplate()}</DocumentPrintWrapper>
-
-					<button style={styles.dangerButton} onClick={() => setDeleteModal(true)}>
-						Eliminar
-					</button>
-				</div>
-			</div>
-
-			{/* PREVIEW */}
-			<div style={styles.previewContainer}>{renderTemplate()}</div>
-
-			<Modal open={deleteModal} title='Eliminar documento' onClose={() => setDeleteModal(false)}>
-				<div
-					style={{
-						display: 'flex',
-						flexDirection: 'column',
-						gap: 16,
-					}}
-				>
-					<p style={{ color: '#374151' }}>¿Estás seguro de eliminar este documento?</p>
-
-					<p style={{ color: '#6B7280', fontSize: 14 }}>
-						La acción ocultará el documento del sistema.
-					</p>
-
-					<div
-						style={{
-							display: 'flex',
-							justifyContent: 'flex-end',
-							gap: 10,
-						}}
-					>
-						<button style={styles.secondaryButton} onClick={() => setDeleteModal(false)}>
-							Cancelar
+					<div style={styles.actions}>
+						<button style={styles.secondaryButton} onClick={() => router.push('/admin')}>
+							Volver
 						</button>
 
-						<button style={styles.dangerButton} onClick={handleDelete} disabled={deleting}>
-							{deleting ? 'Eliminando...' : 'Eliminar'}
+						<button
+							style={styles.primaryButton}
+							onClick={() => router.push(`/admin/documents/edit/${document.id}`)}
+						>
+							Editar
+						</button>
+
+						<DocumentPrintWrapper buttonLabel='Imprimir'>{renderTemplate()}</DocumentPrintWrapper>
+
+						<button style={styles.dangerButton} onClick={() => setDeleteModal(true)}>
+							Eliminar
 						</button>
 					</div>
 				</div>
-			</Modal>
-		</div>
+
+				{/* PREVIEW */}
+				<div style={styles.previewContainer}>{renderTemplate()}</div>
+
+				<Modal open={deleteModal} title='Eliminar documento' onClose={() => setDeleteModal(false)}>
+					<div
+						style={{
+							display: 'flex',
+							flexDirection: 'column',
+							gap: 16,
+						}}
+					>
+						<p style={{ color: '#374151' }}>¿Estás seguro de eliminar este documento?</p>
+
+						<p style={{ color: '#6B7280', fontSize: 14 }}>
+							La acción ocultará el documento del sistema.
+						</p>
+
+						<div
+							style={{
+								display: 'flex',
+								justifyContent: 'flex-end',
+								gap: 10,
+							}}
+						>
+							<button style={styles.secondaryButton} onClick={() => setDeleteModal(false)}>
+								Cancelar
+							</button>
+
+							<button style={styles.dangerButton} onClick={handleDelete} disabled={deleting}>
+								{deleting ? 'Eliminando...' : 'Eliminar'}
+							</button>
+						</div>
+					</div>
+				</Modal>
+			</div>
+		</>
 	)
 }
 
